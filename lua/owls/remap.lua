@@ -24,3 +24,4 @@ vim.opt.autoindent = true    -- Good auto indent
 
 -- Optional but recommended
 vim.opt.breakindent = true   -- Maintain indent when wrapping lines
+
