@@ -1,3 +1,4 @@
+-- Treesitter: Advanced syntax highlighting and code parsing for improved syntax awareness and code navigation
 return {
  "nvim-treesitter/nvim-treesitter",
  build = ":TSUpdate",

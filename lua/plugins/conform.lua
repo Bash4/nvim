@@ -1,3 +1,4 @@
+-- Conform: Code formatting engine with support for multiple language-specific formatters
 return {
 	"stevearc/conform.nvim",
 	opts = {

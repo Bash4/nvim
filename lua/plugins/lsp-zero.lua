@@ -1,3 +1,4 @@
+-- LSP-Zero: Collection for Language Server Protocol (LSP) configuration with autocompletion and language server integration
 return {
 	{
 		"VonHeikemen/lsp-zero.nvim",

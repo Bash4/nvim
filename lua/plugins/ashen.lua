@@ -1,3 +1,4 @@
+-- Ashen: Minimalist dark theme with muted color palette for distraction-free coding
 return {
   "ficcdaf/ashen.nvim",
   lazy = false,

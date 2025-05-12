@@ -1,3 +1,4 @@
+-- Gitsigns: Shows git change indicators in the sign column and provides hunks operations
 return {
 	"lewis6991/gitsigns.nvim",
 	dependencies = {

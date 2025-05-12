@@ -1,3 +1,4 @@
+-- Blame: Displays git blame information for the current line in a virtual text column
 return {
   {
     "FabijanZulj/blame.nvim",

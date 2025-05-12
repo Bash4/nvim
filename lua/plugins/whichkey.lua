@@ -1,3 +1,4 @@
+-- Which-Key: Displays available keybindings in a popup when you start typing a command
 return {
   "folke/which-key.nvim",
   event = "VeryLazy",

@@ -1,3 +1,4 @@
+-- Lazygit: Integration with lazygit for Git operations in a floating terminal window
 -- nvim v0.8.0
 return {
 	"kdheepak/lazygit.nvim",

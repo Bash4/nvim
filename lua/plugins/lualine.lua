@@ -1,3 +1,4 @@
+-- Lualine: Configurable status line providing information about current mode, git status, diagnostics, and file details
 return {
   "nvim-lualine/lualine.nvim",
   dependencies = { "nvim-tree/nvim-web-devicons" },

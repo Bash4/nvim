@@ -1,4 +1,5 @@
- return {
+-- Startuptime: Tool for measuring and analyzing Neovim startup time for optimization purposes
+return {
     "dstein64/vim-startuptime",
     -- lazy-load on a command
     cmd = "StartupTime",

@@ -1,3 +1,4 @@
+-- Undo-Telescope: Telescope extension for browsing and visualizing the Vim undo history
 return {
 	"debugloop/telescope-undo.nvim",
 	dependencies = { -- note how they're inverted to above example
