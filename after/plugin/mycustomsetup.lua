@@ -24,12 +24,13 @@ end
 
 -- Function to create themed menu
 local function create_theme_menu()
-  local width = 80  -- Increased width to accommodate descriptions
+  -- Use a single-column layout with plenty of width for full descriptions
+  local width = 120
   local bufnr = vim.api.nvim_create_buf(false, true)
   
   -- Calculate centered position
   local ui = vim.api.nvim_list_uis()[1]
-  local max_height = math.min(#theme_options + 6, 20)  -- Limit height
+  local max_height = math.min((#theme_options * 2) + 6, 25)  -- Increased height for spacing
   local row = math.floor((ui.height - max_height) / 2)
   local col = math.floor((ui.width - width) / 2)
   
@@ -40,44 +41,23 @@ local function create_theme_menu()
     "│" .. string.rep("─", width - 2) .. "│"
   }
   
-  -- Add options in columns if we have many themes
-  if #theme_options > 6 then
-    local half = math.ceil(#theme_options / 2)
-    for i = 1, half do
-      local left_theme = theme_options[i]
-      local right_theme = theme_options[i + half]
-      local left_entry = string.format("  %2d. %-12s  %-30s", i, left_theme.name, left_theme.description:sub(1, 30))
-      
-      local line = left_entry
-      if right_theme then
-        local right_entry = string.format("  %2d. %-12s  %-30s", i + half, right_theme.name, right_theme.description:sub(1, 30))
-        local padding = width - 2 - #left_entry - #right_entry
-        if padding > 0 then
-          line = left_entry .. string.rep(" ", padding) .. right_entry
-        else
-          line = left_entry
-        end
-      end
-      
-      -- Ensure the line fits within the width
-      if #line > width - 4 then
-        line = line:sub(1, width - 7) .. "..."
-      end
-      -- Pad the line to full width
-      line = line .. string.rep(" ", width - 2 - #line)
-      table.insert(content, "│" .. line .. "│")
+  -- Simple single-column layout with full descriptions
+  for i, theme in ipairs(theme_options) do
+    -- Format with adequate spacing between number, name, and description
+    local entry = string.format("  %2d.  %-15s  %s", i, theme.name, theme.description)
+    
+    -- Ensure the entry fits within width
+    if #entry > width - 4 then
+      entry = entry:sub(1, width - 7) .. "..."
     end
-  else
-    -- Original single column layout for fewer themes
-    for i, theme in ipairs(theme_options) do
-      local entry = string.format("  %2d. %-12s  %s", i, theme.name, theme.description)
-      -- Ensure the line fits within the width
-      if #entry > width - 4 then
-        entry = entry:sub(1, width - 7) .. "..."
-      end
-      -- Pad the line to full width
-      entry = entry .. string.rep(" ", width - 2 - #entry)
-      table.insert(content, "│" .. entry .. "│")
+    
+    -- Pad the line to full width for consistent display
+    entry = entry .. string.rep(" ", width - 2 - #entry)
+    table.insert(content, "│" .. entry .. "│")
+    
+    -- Add a small separator between themes for better readability
+    if i < #theme_options then
+      table.insert(content, "│" .. string.rep(" ", width - 2) .. "│")
     end
   end
   
@@ -93,7 +73,7 @@ local function create_theme_menu()
   vim.api.nvim_buf_set_option(bufnr, 'bufhidden', 'wipe')
   vim.api.nvim_buf_set_option(bufnr, 'buftype', 'nofile')
   
-  -- Create window
+  -- Create floating window with border
   local winnr = vim.api.nvim_open_win(bufnr, true, {
     relative = 'editor',
     row = row,
@@ -109,15 +89,29 @@ local function create_theme_menu()
   -- Set keymaps
   local opts = { noremap = true, silent = true }
   for i, theme in ipairs(theme_options) do
-    vim.api.nvim_buf_set_keymap(bufnr, 'n', tostring(i), 
-      string.format([[<cmd>lua ColorMyPencils('%s')<CR>]], theme.name) .. 
+    vim.api.nvim_buf_set_keymap(bufnr, 'n', tostring(i),
+      string.format([[<cmd>lua ColorMyPencils('%s')<CR>]], theme.name) ..
       '<cmd>close<CR>', opts)
+  end
+  
+  -- Add keymaps for numbers > 9
+  if #theme_options > 9 then
+    -- Create two-digit keymaps (10-99)
+    for i = 10, #theme_options do
+      local first_digit = math.floor(i / 10)
+      local second_digit = i % 10
+      
+      -- Create key sequence for two-digit number
+      vim.api.nvim_buf_set_keymap(bufnr, 'n', tostring(first_digit) .. tostring(second_digit),
+        string.format([[<cmd>lua ColorMyPencils('%s')<CR>]], theme_options[i].name) ..
+        '<cmd>close<CR>', opts)
+    end
   end
   
   vim.api.nvim_buf_set_keymap(bufnr, 'n', '<Esc>', '<cmd>close<CR>', opts)
 end
 
--- Add transparency settings to the ColorMyPencils function
+-- Enhanced ColorMyPencils function with improved theme switching
 function ColorMyPencils(theme)
   -- Tell Neovim to use true colors
   vim.opt.termguicolors = true
@@ -135,22 +129,50 @@ function ColorMyPencils(theme)
       end
     end
     chosen_scheme = valid_themes[math.random(#valid_themes)]
+    vim.notify("Random theme selected: " .. chosen_scheme, vim.log.levels.INFO)
   end
+  
+  -- Reset any previously applied highlights before changing theme
+  vim.cmd("hi clear")
   
   -- Set the colorscheme
-  local ok, _ = pcall(vim.cmd.colorscheme, chosen_scheme)
+  local ok, err = pcall(vim.cmd.colorscheme, chosen_scheme)
   
   if not ok then
-    -- Fallback to a default colorscheme if the chosen one isn't available
-    vim.notify("Couldn't load " .. chosen_scheme .. ", falling back to habamax", vim.log.levels.WARN)
-    vim.cmd.colorscheme("habamax")
+    -- Provide more detailed error message when theme fails to load
+    vim.notify(
+      "Couldn't load theme '" .. chosen_scheme .. "': " .. (err or "Unknown error") ..
+      "\nFalling back to default theme.",
+      vim.log.levels.WARN
+    )
+    pcall(vim.cmd.colorscheme, "habamax")
   else
-    vim.notify("Using colorscheme: " .. chosen_scheme)
+    -- Save the chosen theme in a global variable for persistence
+    vim.g.last_colorscheme = chosen_scheme
+    
+    -- Success notification with nice formatting
+    vim.defer_fn(function()
+      local theme_info = ""
+      for _, t in ipairs(theme_options) do
+        if t.name == chosen_scheme then
+          theme_info = t.description
+          break
+        end
+      end
+      
+      vim.notify(
+        "Theme: " .. chosen_scheme ..
+        (theme_info ~= "" and "\n" .. theme_info or ""),
+        vim.log.levels.INFO
+      )
+    end, 100) -- Slight delay for better UX
   end
 
-  -- Add transparency settings
-  vim.api.nvim_set_hl(0, "Normal", { bg = "NONE" })
-  vim.api.nvim_set_hl(0, "NormalFloat", { bg = "NONE" })
+  -- Apply transparency settings if enabled
+  if vim.g.enable_transparency then
+    vim.api.nvim_set_hl(0, "Normal", { bg = "NONE" })
+    vim.api.nvim_set_hl(0, "NormalFloat", { bg = "NONE" })
+  end
 end
 
 -- Add command to change colorscheme
@@ -158,7 +180,34 @@ vim.api.nvim_create_user_command('Theme', function()
   create_theme_menu()
 end, {})
 
+-- Initialize transparency setting (default: enabled)
+vim.g.enable_transparency = true
+
+-- Add commands for transparency control
+vim.api.nvim_create_user_command('TransparencyOn', function()
+  vim.g.enable_transparency = true
+  -- Reapply current theme to update transparency
+  ColorMyPencils(vim.g.last_colorscheme or "random")
+  vim.notify("Transparency enabled", vim.log.levels.INFO)
+end, {})
+
+vim.api.nvim_create_user_command('TransparencyOff', function()
+  vim.g.enable_transparency = false
+  -- Reapply current theme to update transparency
+  ColorMyPencils(vim.g.last_colorscheme or "random")
+  vim.notify("Transparency disabled", vim.log.levels.INFO)
+end, {})
+
+-- Add command to restore last theme
+vim.api.nvim_create_user_command('ThemeRestore', function()
+  if vim.g.last_colorscheme then
+    ColorMyPencils(vim.g.last_colorscheme)
+  else
+    vim.notify("No previous theme found", vim.log.levels.WARN)
+  end
+end, {})
+
 -- Show menu on startup
 vim.defer_fn(function()
   create_theme_menu()
-end, 0)
+end, 100) -- Small delay for better startup experience
