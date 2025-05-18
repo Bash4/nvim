@@ -83,7 +83,6 @@ return {
 			require("mason-lspconfig").setup({
 				ensure_installed = {
 					-- Web Development
-					"ts_ls", -- TypeScript/JavaScript
 					"html", -- HTML
 					"cssls", -- CSS
 					"intelephense", -- PHP

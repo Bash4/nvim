@@ -129,7 +129,7 @@ function ColorMyPencils(theme)
       end
     end
     chosen_scheme = valid_themes[math.random(#valid_themes)]
-    vim.notify("Random theme selected: " .. chosen_scheme, vim.log.levels.INFO)
+    -- Skip notification for cleaner startup
   end
   
   -- Reset any previously applied highlights before changing theme
@@ -150,22 +150,7 @@ function ColorMyPencils(theme)
     -- Save the chosen theme in a global variable for persistence
     vim.g.last_colorscheme = chosen_scheme
     
-    -- Success notification with nice formatting
-    vim.defer_fn(function()
-      local theme_info = ""
-      for _, t in ipairs(theme_options) do
-        if t.name == chosen_scheme then
-          theme_info = t.description
-          break
-        end
-      end
-      
-      vim.notify(
-        "Theme: " .. chosen_scheme ..
-        (theme_info ~= "" and "\n" .. theme_info or ""),
-        vim.log.levels.INFO
-      )
-    end, 100) -- Slight delay for better UX
+    -- No theme notification for cleaner startup
   end
 
   -- Apply transparency settings if enabled
@@ -207,7 +192,7 @@ vim.api.nvim_create_user_command('ThemeRestore', function()
   end
 end, {})
 
--- Show menu on startup
+-- Apply random theme on startup
 vim.defer_fn(function()
-  create_theme_menu()
+  ColorMyPencils("random")
 end, 100) -- Small delay for better startup experience
