@@ -1,4 +1,3 @@
--- Telescope: Fuzzy finder for files, buffers, grep results, and more with powerful search capabilities
 return {
 	"nvim-telescope/telescope.nvim",
 	tag = "0.1.8",

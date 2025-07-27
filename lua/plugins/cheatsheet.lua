@@ -2,7 +2,6 @@
 return {
   "sudormrfbin/cheatsheet.nvim",
   dependencies = {
-    "nvim-telescope/telescope.nvim",
     "nvim-lua/plenary.nvim",
   },
   config = function()
@@ -17,21 +16,13 @@ return {
       
       -- Include only the most popular plugin cheatsheets
       include_only_installed_plugins = true,
-      
-      -- Key mappings bound by default to telescope
-      telescope_mappings = {
-        ['<CR>'] = require('cheatsheet.telescope.actions').select_or_fill_commandline,
-        ['<A-CR>'] = require('cheatsheet.telescope.actions').select_or_execute,
-        ['<C-Y>'] = require('cheatsheet.telescope.actions').copy_cheat_value,
-        ['<C-E>'] = require('cheatsheet.telescope.actions').edit_user_cheatsheet,
-      },
     })
     
     -- Create a custom cheatsheet for your own configs
     -- Add individual cheats for different sections
 
     -- File Navigation
-    cheatsheet.add_cheat("Find file by name (Telescope)", "<leader>ff", "File Navigation")
+    cheatsheet.add_cheat("Find file by name (FZF)", "<leader>ff", "File Navigation")
     cheatsheet.add_cheat("Find content in files (Live Grep)", "<leader>fg", "File Navigation")
     cheatsheet.add_cheat("Browse open buffers", "<leader>fb", "File Navigation")
     cheatsheet.add_cheat("Recent files", "<leader>fr", "File Navigation")
@@ -42,7 +33,7 @@ return {
     -- Git Commands
     cheatsheet.add_cheat("Open LazyGit", "<leader>lg", "Git Commands")
     cheatsheet.add_cheat("Toggle Git blame", "<leader>gb", "Git Commands")
-    cheatsheet.add_cheat("Git status (Telescope)", "<leader>gs", "Git Commands")
+    cheatsheet.add_cheat("Git status (FZF)", "<leader>fs", "Git Commands")
     cheatsheet.add_cheat("Next hunk (GitSigns)", "]c", "Git Commands")
     cheatsheet.add_cheat("Previous hunk (GitSigns)", "[c", "Git Commands")
     cheatsheet.add_cheat("Stage hunk (GitSigns)", "<leader>hs", "Git Commands")
