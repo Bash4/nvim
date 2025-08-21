@@ -192,7 +192,7 @@ vim.api.nvim_create_user_command('ThemeRestore', function()
   end
 end, {})
 
--- Apply random theme on startup
+-- Apply kanagawa theme on startup
 vim.defer_fn(function()
-  ColorMyPencils("random")
+  ColorMyPencils("kanagawa")
 end, 100) -- Small delay for better startup experience

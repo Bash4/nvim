@@ -106,7 +106,6 @@ return {
 					"eslint", -- JavaScript/TypeScript linting
 					"jsonls", -- JSON
 					"emmet_ls", -- Emmet support
-					"volar", -- Vue
 					"prismals", -- Prisma
 
 					-- General Purpose
